@@ -3,7 +3,10 @@ from jose import jwt
 from config import SECRET_KEY, ALGORITHM
 
 async def enforce_tiers(request: Request, call_next):
+    if request.url.path == "/revoke-token":
+        return await call_next(request)
     auth_header = request.headers.get("Authorization")
+    print("auth_header:", auth_header)  
     if not auth_header or not auth_header.startswith("Bearer "):
         raise HTTPException(status_code=401, detail="Missing or invalid token")
 
