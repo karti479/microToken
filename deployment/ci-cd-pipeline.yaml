@@ -1,0 +1,46 @@
+name: Build and Deploy MicroTokenAI
+
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Login to Container Registry
+        run: |
+          echo $CR_PAT | docker login ghcr.io -u $GITHUB_ACTOR --password-stdin
+
+      - name: Build Server Image
+        run: |
+          docker build -t ghcr.io/myorg/microtokenai-server:latest -f deployment/Dockerfile .
+          docker push ghcr.io/myorg/microtokenai-server:latest
+
+      - name: Build Agent Image
+        run: |
+          docker build -t ghcr.io/myorg/microtokenai-agent:latest -f deployment/Dockerfile.agent .
+          docker push ghcr.io/myorg/microtokenai-agent:latest
+
+  deploy-to-k8s:
+    needs: [build-and-push]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+      - name: Setup Kubectl
+        uses: azure/setup-kubectl@v3
+        with:
+          version: 'v1.26.0'
+      - name: Configure kubectl
+        run: |
+          echo "$KUBE_CONFIG" | base64 --decode > kubeconfig
+          export KUBECONFIG=$PWD/kubeconfig
+      - name: Deploy Helm Chart
+        run: |
+          helm upgrade --install microtokenai deployment/helm-chart \
+            --set image.repository=ghcr.io/myorg/microtokenai-server \
+            --set image.tag=latest

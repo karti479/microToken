@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: microtokenai
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: microtokenai
+  template:
+    metadata:
+      labels:
+        app: microtokenai
+    spec:
+      containers:
+        - name: server
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          env:
+            - name: MICROTOKENAI_SECRET_KEY
+              value: "{{ .Values.env.MICROTOKENAI_SECRET_KEY }}"
+            - name: REDIS_HOST
+              value: "{{ .Values.env.REDIS_HOST }}"
+            - name: REDIS_PORT
+              value: "{{ .Values.env.REDIS_PORT }}"
+            - name: AWS_STS_ENDPOINT
+              value: "{{ .Values.env.AWS_STS_ENDPOINT }}"
+            - name: AZURE_GRAPH_ENDPOINT
+              value: "{{ .Values.env.AZURE_GRAPH_ENDPOINT }}"
+            - name: GCP_IAM_ENDPOINT
+              value: "{{ .Values.env.GCP_IAM_ENDPOINT }}"
+            - name: FREE_TIER_EXPIRATION
+              value: "{{ .Values.env.FREE_TIER_EXPIRATION }}"
+            - name: PREMIUM_TIER_EXPIRATION
+              value: "{{ .Values.env.PREMIUM_TIER_EXPIRATION }}"
+            - name: FREE_TIER_ANOMALY_RATE
+              value: "{{ .Values.env.FREE_TIER_ANOMALY_RATE }}"
+            - name: PREMIUM_TIER_ANOMALY_RATE
+              value: "{{ .Values.env.PREMIUM_TIER_ANOMALY_RATE }}"
+            - name: ALLOWED_GEOLOCATIONS_FREE
+              value: "{{ .Values.env.ALLOWED_GEOLOCATIONS_FREE }}"
+          ports:
+            - containerPort: 8000

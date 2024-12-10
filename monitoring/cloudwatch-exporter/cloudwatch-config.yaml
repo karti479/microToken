@@ -1,0 +1,10 @@
+region: us-east-1
+metrics:
+  - namespace: AWS/EC2
+    dimensions:
+      - name: InstanceId
+    metrics:
+      - name: CPUUtilization
+        statistics: [Average, Maximum]
+        period: 300
+        length: 600

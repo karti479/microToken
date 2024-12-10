@@ -1,0 +1,18 @@
+{
+    "title": "MicroTokenAI Dashboard",
+    "panels": [
+      {
+        "title": "Anomaly Detection Rate",
+        "type": "graph",
+        "targets": [
+          {
+            "expr": "rate(anomalies_detected[5m])",
+            "legendFormat": "Anomalies"
+          }
+        ]
+      }
+    ],
+    "schemaVersion": 27,
+    "version": 1
+  }
+  

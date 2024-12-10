@@ -1,0 +1,14 @@
+version: '3.3'
+services:
+  cloudwatch-exporter:
+    image: prom/cloudwatch-exporter:latest
+    volumes:
+      - ./cloudwatch-config.yaml:/config/cloudwatch-config.yaml
+    command:
+      - "--config.file=/config/cloudwatch-config.yaml"
+    ports:
+      - "9106:9106"
+    environment:
+      - AWS_ACCESS_KEY_ID=your_access_key
+      - AWS_SECRET_ACCESS_KEY=your_secret_key
+      - AWS_REGION=us-east-1
